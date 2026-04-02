@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FreshBowl – Salad Buah Segar</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary:   '#EB4C4C',
+            medium:    '#FF7070',
+            light:     '#FFA6A6',
+            cream:     '#FFEDC7',
+          },
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            body:    ['DM Sans', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --c1: #EB4C4C;
+      --c2: #FF7070;
+      --c3: #FFA6A6;
+      --c4: #FFEDC7;
+    }
+    * { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; background: var(--c4); overflow-x: hidden; }
+
+    /* ── NAV ── */
+    .nav-glass {
+      background: rgba(255,237,199,0.88);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(235,76,76,0.15);
+    }
+    .nav-link { position:relative; }
+    .nav-link::after {
+      content:''; position:absolute; left:0; bottom:-2px;
+      width:0; height:2px; background:var(--c1);
+      transition: width .3s ease;
+    }
+    .nav-link:hover::after { width:100%; }
+
+    /* ── HERO ── */
+    .hero-bg {
+      background: radial-gradient(ellipse 80% 60% at 70% 40%, var(--c3) 0%, var(--c4) 60%, #fff8ee 100%);
+    }
+    .blob {
+      position:absolute; border-radius:50%;
+      filter: blur(60px); opacity:.45; pointer-events:none;
+    }
+    .float { animation: floatY 4s ease-in-out infinite; }
+    .float2 { animation: floatY 5s ease-in-out infinite reverse; }
+    @keyframes floatY {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-18px); }
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(30px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .fade-up { opacity:0; animation: fadeUp .7s ease forwards; }
+    .delay-1 { animation-delay: .15s; }
+    .delay-2 { animation-delay: .3s;  }
+    .delay-3 { animation-delay: .45s; }
+    .delay-4 { animation-delay: .6s;  }
+
+    /* ── CARDS ── */
+    .card-hover {
+      transition: transform .3s ease, box-shadow .3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 48px rgba(235,76,76,.22);
+    }
+
+    /* ── SLIDER ── */
+    .slider-track { display:flex; transition: transform .5s cubic-bezier(.77,0,.18,1); }
+    .slider-btn {
+      width:44px; height:44px; border-radius:50%;
+      background:var(--c1); color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer; border:none; transition: background .2s;
+      flex-shrink:0;
+    }
+    .slider-btn:hover { background:var(--c2); }
+    .dot {
+      width:10px; height:10px; border-radius:50%;
+      background:var(--c3); cursor:pointer; transition: background .2s, transform .2s;
+    }
+    .dot.active { background:var(--c1); transform:scale(1.3); }
+
+    /* ── FORM ── */
+    .form-input {
+      background: rgba(255,255,255,.7);
+      border: 1.5px solid var(--c3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      width:100%;
+      font-family: 'DM Sans', sans-serif;
+      transition: border-color .2s, box-shadow .2s;
+      outline: none;
+    }
+    .form-input:focus {
+      border-color: var(--c1);
+      box-shadow: 0 0 0 3px rgba(235,76,76,.13);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--c1) 0%, var(--c2) 100%);
+      color:#fff; border:none; border-radius:14px;
+      padding: 14px 32px; font-weight:600; font-size:16px;
+      cursor:pointer; transition: transform .2s, box-shadow .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(235,76,76,.38);
+    }
+    .btn-primary:disabled { opacity:.6; cursor:not-allowed; transform:none; }
+
+    /* ── TOAST ── */
+    #toast {
+      position:fixed; bottom:28px; right:28px; z-index:9999;
+      background: var(--c1); color:#fff; padding:14px 24px;
+      border-radius:14px; font-weight:500; font-size:15px;
+      transform: translateY(80px); opacity:0;
+      transition: transform .4s ease, opacity .4s ease;
+      pointer-events:none;
+    }
+    #toast.show { transform:translateY(0); opacity:1; }
+
+    /* ── SECTION TITLES ── */
+    .section-tag {
+      display:inline-flex; align-items:center; gap:6px;
+      background:rgba(235,76,76,.1); color:var(--c1);
+      border-radius:999px; padding:4px 14px;
+      font-size:13px; font-weight:600; letter-spacing:.5px;
+      text-transform:uppercase;
+    }
+    .divider-wave {
+      width:100%; height:50px; overflow:hidden;
+    }
+
+    /* ── SCROLLBAR ── */
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:var(--c4); }
+    ::-webkit-scrollbar-thumb { background:var(--c3); border-radius:3px; }
+
+    /* ── BADGE ── */
+    .badge {
+      position:absolute; top:-8px; right:-8px;
+      background:var(--c1); color:#fff;
+      border-radius:999px; padding:2px 10px;
+      font-size:11px; font-weight:700;
+    }
+
+    /* Mobile nav */
+    #mobile-menu { display:none; }
+    #mobile-menu.open { display:flex; }
+  </style>
+</head>
+<body>
+
+<!-- ══════════ NAV ══════════ -->
+<nav class="nav-glass fixed top-0 left-0 right-0 z-50 py-3 px-6 md:px-12">
+  <div class="max-w-6xl mx-auto flex items-center justify-between">
+    <!-- Logo -->
+    <a href="#hero" class="flex items-center gap-2">
+      <div class="w-9 h-9 rounded-xl flex items-center justify-center" style="background:var(--c1)">
+        <i data-lucide="salad" class="text-white w-5 h-5"></i>
+      </div>
+      <span class="font-display font-900 text-xl" style="color:var(--c1)">FreshBowl</span>
+    </a>
+    <!-- Desktop links -->
+    <div class="hidden md:flex items-center gap-8 text-sm font-medium" style="color:#444">
+      <a href="#menu"   class="nav-link">Menu</a>
+      <a href="#about"  class="nav-link">Tentang</a>
+      <a href="#testi"  class="nav-link">Testimoni</a>
+      <a href="#order"  class="nav-link">Pesan</a>
+    </div>
+    <!-- CTA -->
+    <a href="#order" class="hidden md:flex items-center gap-2 text-white text-sm font-semibold px-5 py-2 rounded-full"
+       style="background:var(--c1)">
+      <i data-lucide="shopping-basket" class="w-4 h-4"></i> Pesan Sekarang
+    </a>
+    <!-- Burger -->
+    <button id="burger" class="md:hidden p-2 rounded-lg" onclick="toggleMobileMenu()">
+      <i data-lucide="menu" class="w-6 h-6" style="color:var(--c1)"></i>
+    </button>
+  </div>
+  <!-- Mobile menu -->
+  <div id="mobile-menu" class="flex-col gap-4 pt-4 pb-2 px-4 max-w-6xl mx-auto">
+    <a href="#menu"  class="font-medium py-2" style="color:#444" onclick="toggleMobileMenu()">Menu</a>
+    <a href="#about" class="font-medium py-2" style="color:#444" onclick="toggleMobileMenu()">Tentang</a>
+    <a href="#testi" class="font-medium py-2" style="color:#444" onclick="toggleMobileMenu()">Testimoni</a>
+    <a href="#order" class="font-medium py-2" style="color:#444" onclick="toggleMobileMenu()">Pesan</a>
+  </div>
+</nav>
+
+<!-- ══════════ HERO ══════════ -->
+<section id="hero" class="hero-bg relative min-h-screen flex items-center pt-20 overflow-hidden">
+  <!-- blobs -->
+  <div class="blob w-72 h-72 top-10 right-10" style="background:var(--c3)"></div>
+  <div class="blob w-48 h-48 bottom-20 left-10" style="background:var(--c2)"></div>
+
+  <div class="max-w-6xl mx-auto px-6 md:px-12 grid md:grid-cols-2 gap-12 items-center w-full py-16">
+    <!-- Text -->
+    <div>
+      <div class="section-tag fade-up mb-5">
+        <i data-lucide="leaf" class="w-3.5 h-3.5"></i> 100% Fresh &amp; Natural
+      </div>
+      <h1 class="font-display font-900 text-5xl md:text-6xl leading-tight fade-up delay-1" style="color:#222">
+        Salad Buah <span style="color:var(--c1)">Segar</span><br/>Setiap Hari
+      </h1>
+      <p class="mt-5 text-lg text-gray-600 max-w-md fade-up delay-2">
+        Nikmati kelezatan salad buah premium buatan tangan, tanpa pengawet, langsung dari kebun ke mangkuk Anda.
+      </p>
+      <div class="flex flex-wrap gap-4 mt-8 fade-up delay-3">
+        <a href="#order" class="btn-primary flex items-center gap-2">
+          <i data-lucide="shopping-cart" class="w-4 h-4"></i> Pesan Sekarang
+        </a>
+        <a href="#menu" class="flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm border-2 transition"
+           style="border-color:var(--c1);color:var(--c1)">
+          Lihat Menu <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </a>
+      </div>
+      <!-- Stats -->
+      <div class="flex gap-8 mt-10 fade-up delay-4">
+        <div>
+          <p class="font-display text-3xl font-700" style="color:var(--c1)">200+</p>
+          <p class="text-xs text-gray-500 font-medium">Pelanggan Puas</p>
+        </div>
+        <div class="w-px bg-gray-200"></div>
+        <div>
+          <p class="font-display text-3xl font-700" style="color:var(--c1)">15+</p>
+          <p class="text-xs text-gray-500 font-medium">Varian Menu</p>
+        </div>
+        <div class="w-px bg-gray-200"></div>
+        <div>
+          <p class="font-display text-3xl font-700" style="color:var(--c1)">4.9★</p>
+          <p class="text-xs text-gray-500 font-medium">Rating Rata-rata</p>
+        </div>
+      </div>
+    </div>
+    <!-- Hero image area -->
+    <div class="relative flex justify-center">
+      <div class="float relative">
+        <!-- Bowl illustration via emoji + decoration -->
+       <div class="w-64 h-64 md:w-80 md:h-80 rounded-full overflow-hidden shadow-2xl">
+  <img src="2522725228.webp" alt="Salad Buah"
+       class="w-full h-full object-cover"/>
+</div>
+          
+        </div>
+        <!-- Floating fruit badges -->
+        <div class="float2 absolute -top-4 -right-4 w-16 h-16 rounded-2xl bg-white shadow-lg flex items-center justify-center text-3xl">🍓</div>
+        <div class="float  absolute top-1/2 -left-8 w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center text-2xl">🍇</div>
+        <div class="float2 absolute -bottom-4 right-8 w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center text-2xl">🥭</div>
+        <div class="float  absolute bottom-10 -left-4 w-12 h-12 rounded-2xl bg-white shadow-lg flex items-center justify-center text-2xl">🍊</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Wave -->
+  <div class="absolute bottom-0 left-0 right-0">
+    <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" style="display:block;width:100%;height:50px">
+      <path fill="#ffffff" d="M0,30 C360,60 1080,0 1440,30 L1440,60 L0,60 Z"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ══════════ FEATURES ══════════ -->
+<section class="bg-white py-16 px-6 md:px-12">
+  <div class="max-w-6xl mx-auto grid md:grid-cols-4 gap-6">
+    <div class="flex items-start gap-3 p-5 rounded-2xl" style="background:var(--c4)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:var(--c1)">
+        <i data-lucide="truck" class="w-5 h-5 text-white"></i>
+      </div>
+      <div><p class="font-semibold text-sm text-gray-800">Gratis Ongkir</p><p class="text-xs text-gray-500 mt-1">Min. pembelian Rp 50k</p></div>
+    </div>
+    <div class="flex items-start gap-3 p-5 rounded-2xl" style="background:var(--c4)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:var(--c1)">
+        <i data-lucide="clock" class="w-5 h-5 text-white"></i>
+      </div>
+      <div><p class="font-semibold text-sm text-gray-800">Pengiriman Cepat</p><p class="text-xs text-gray-500 mt-1">15–20 menit tiba</p></div>
+    </div>
+    <div class="flex items-start gap-3 p-5 rounded-2xl" style="background:var(--c4)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:var(--c1)">
+        <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+      </div>
+      <div><p class="font-semibold text-sm text-gray-800">Terjamin Segar</p><p class="text-xs text-gray-500 mt-1">Diproses hari yang sama</p></div>
+    </div>
+    <div class="flex items-start gap-3 p-5 rounded-2xl" style="background:var(--c4)">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style="background:var(--c1)">
+        <i data-lucide="heart" class="w-5 h-5 text-white"></i>
+      </div>
+      <div><p class="font-semibold text-sm text-gray-800">100% Alami</p><p class="text-xs text-gray-500 mt-1">Tanpa pewarna & pengawet</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MENU / SLIDER ══════════ -->
+<section id="menu" class="bg-white py-20 px-6 md:px-12">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-12">
+      <div class="section-tag mb-4"><i data-lucide="utensils" class="w-3.5 h-3.5"></i> Menu Kami</div>
+      <h2 class="font-display text-4xl font-700" style="color:#222">Pilihan <span style="color:var(--c1)">Lezat</span></h2>
+      <p class="mt-3 text-gray-500 max-w-md mx-auto">Setiap bowl dibuat segar saat pesanan masuk — dipilih, dipotong, dan disajikan dengan cinta.</p>
+    </div>
+
+    <!-- Slider -->
+    <div class="relative overflow-hidden" id="slider-wrapper">
+      <div class="slider-track" id="sliderTrack">
+
+        <!-- Card 1 -->
+        <div class="min-w-[280px] md:min-w-[320px] mx-3 bg-white rounded-3xl shadow-md overflow-hidden card-hover border" style="border-color:#fde8e8">
+          <div class="h-48 flex items-center justify-center text-7xl" style="background:linear-gradient(135deg,var(--c4),#ffe0e0)">🍓</div>
+          <div class="p-5 relative">
+            <span class="badge">Best Seller</span>
+            <p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--c1)">Signature</p>
+            <h3 class="font-display text-lg font-700 text-gray-800 mt-1">Strawberry Paradise</h3>
+            <p class="text-xs text-gray-500 mt-2">Stroberi, anggur, kiwi, nata de coco, saus yogurt madu</p>
+            <div class="flex items-center justify-between mt-4">
+              <p class="font-700 text-gray-800">Rp 28.000</p>
+              <a href="#order" class="text-xs font-semibold px-4 py-2 rounded-xl text-white" style="background:var(--c1)">Pesan</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="min-w-[280px] md:min-w-[320px] mx-3 bg-white rounded-3xl shadow-md overflow-hidden card-hover border" style="border-color:#fde8e8">
+          <div class="h-48 flex items-center justify-center text-7xl" style="background:linear-gradient(135deg,#fff3cd,var(--c4))">🥭</div>
+          <div class="p-5">
+            <p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--c1)">Tropical</p>
+            <h3 class="font-display text-lg font-700 text-gray-800 mt-1">Mango Fiesta</h3>
+            <p class="text-xs text-gray-500 mt-2">Mangga, pepaya, melon, kelapa muda, saus jeruk nipis</p>
+            <div class="flex items-center justify-between mt-4">
+              <p class="font-700 text-gray-800">Rp 25.000</p>
+              <a href="#order" class="text-xs font-semibold px-4 py-2 rounded-xl text-white" style="background:var(--c1)">Pesan</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="min-w-[280px] md:min-w-[320px] mx-3 bg-white rounded-3xl shadow-md overflow-hidden card-hover border" style="border-color:#fde8e8">
+          <div class="h-48 flex items-center justify-center text-7xl" style="background:linear-gradient(135deg,#e8f5e9,var(--c4))">🍇</div>
+          <div class="p-5 relative">
+            <span class="badge">Baru!</span>
+            <p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--c1)">Berry Mix</p>
+            <h3 class="font-display text-lg font-700 text-gray-800 mt-1">Mixed Berry Bowl</h3>
+            <p class="text-xs text-gray-500 mt-2">Anggur, blueberry, stroberi, raspberry, granola, madu</p>
+            <div class="flex items-center justify-between mt-4">
+              <p class="font-700 text-gray-800">Rp 32.000</p>
+              <a href="#order" class="text-xs font-semibold px-4 py-2 rounded-xl text-white" style="background:var(--c1)">Pesan</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="min-w-[280px] md:min-w-[320px] mx-3 bg-white rounded-3xl shadow-md overflow-hidden card-hover border" style="border-color:#fde8e8">
+          <div class="h-48 flex items-center justify-center text-7xl" style="background:linear-gradient(135deg,#fce4ec,var(--c4))">🍈</div>
+          <div class="p-5">
+            <p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--c1)">Classic</p>
+            <h3 class="font-display text-lg font-700 text-gray-800 mt-1">Melon Dream</h3>
+            <p class="text-xs text-gray-500 mt-2">Melon, semangka, apel hijau, nata de coco, susu kental</p>
+            <div class="flex items-center justify-between mt-4">
+              <p class="font-700 text-gray-800">Rp 22.000</p>
+              <a href="#order" class="text-xs font-semibold px-4 py-2 rounded-xl text-white" style="background:var(--c1)">Pesan</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="min-w-[280px] md:min-w-[320px] mx-3 bg-white rounded-3xl shadow-md overflow-hidden card-hover border" style="border-color:#fde8e8">
+          <div class="h-48 flex items-center justify-center text-7xl" style="background:linear-gradient(135deg,#fff8e1,var(--c4))">🍊</div>
+          <div class="p-5">
+            <p class="text-xs font-semibold uppercase tracking-wider" style="color:var(--c1)">Citrus</p>
+            <h3 class="font-display text-lg font-700 text-gray-800 mt-1">Citrus Splash</h3>
+            <p class="text-xs text-gray-500 mt-2">Jeruk, pomelo, kiwi, lemon, madu, mint segar</p>
+            <div class="flex items-center justify-between mt-4">
+              <p class="font-700 text-gray-800">Rp 26.000</p>
+              <a href="#order" class="text-xs font-semibold px-4 py-2 rounded-xl text-white" style="background:var(--c1)">Pesan</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="flex items-center justify-center gap-4 mt-8">
+      <button class="slider-btn" id="prevBtn" onclick="slide(-1)">
+        <i data-lucide="chevron-left" class="w-5 h-5"></i>
+      </button>
+      <div class="flex gap-2" id="dots"></div>
+      <button class="slider-btn" id="nextBtn" onclick="slide(1)">
+        <i data-lucide="chevron-right" class="w-5 h-5"></i>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ ABOUT ══════════ -->
+<section id="about" class="py-20 px-6 md:px-12" style="background:var(--c4)">
+  <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+    <!-- Visual -->
+    <div class="relative flex justify-center">
+     <div class="w-64 h-64 md:w-80 md:h-80 rounded-3xl overflow-hidden shadow-xl float">
+  <img src="cara-membuat-salad-buah-4-780x470.jpg" alt="Tentang FreshBowl"
+       class="w-full h-full object-cover"/>
+</div>
+      <div class="absolute -bottom-6 -right-4 bg-white rounded-2xl shadow-lg p-4 flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:var(--c1)">
+          <i data-lucide="award" class="w-5 h-5 text-white"></i>
+        </div>
+        <div><p class="font-bold text-sm text-gray-800">Berdiri Sejak</p><p class="text-xs text-gray-500">2019 · Surabaya</p></div>
+      </div>
+    </div>
+    <!-- Text -->
+    <div>
+      <div class="section-tag mb-4"><i data-lucide="info" class="w-3.5 h-3.5"></i> Tentang Kami</div>
+      <h2 class="font-display text-4xl font-700" style="color:#222">Kami Percaya <span style="color:var(--c1)">Makanan Sehat</span> Itu Harus Enak</h2>
+      <p class="mt-4 text-gray-600 leading-relaxed">
+        FreshBowl lahir dari semangat menyajikan salad buah segar yang tidak hanya bergizi, tetapi juga memanjakan lidah. Setiap bahan dipilih langsung dari petani lokal terpercaya.
+      </p>
+      <p class="mt-3 text-gray-600 leading-relaxed">
+      Dengan pengalaman lebih dari 5 tahun, kami sudah melayani banyak pelanggan di Surabaya dan sekitarnya — mulai dari pembelian pribadi sampai pesanan untuk acara kecil-kecilan.
+      </p>
+      <div class="grid grid-cols-2 gap-4 mt-8">
+        <div class="p-4 rounded-2xl bg-white shadow-sm flex items-center gap-3">
+          <i data-lucide="sprout" class="w-6 h-6" style="color:var(--c1)"></i>
+          <p class="text-sm font-semibold text-gray-700">Bahan Organik</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-white shadow-sm flex items-center gap-3">
+          <i data-lucide="recycle" class="w-6 h-6" style="color:var(--c1)"></i>
+          <p class="text-sm font-semibold text-gray-700">Kemasan Ramah Lingkungan</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-white shadow-sm flex items-center gap-3">
+          <i data-lucide="users" class="w-6 h-6" style="color:var(--c1)"></i>
+          <p class="text-sm font-semibold text-gray-700">Melayani Katering</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-white shadow-sm flex items-center gap-3">
+          <i data-lucide="badge-check" class="w-6 h-6" style="color:var(--c1)"></i>
+          <p class="text-sm font-semibold text-gray-700">100% Halal & Fresh</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ TESTIMONIALS ══════════ -->
+<section id="testi" class="bg-white py-20 px-6 md:px-12">
+  <div class="max-w-6xl mx-auto">
+    <div class="text-center mb-12">
+      <div class="section-tag mb-4"><i data-lucide="star" class="w-3.5 h-3.5"></i> Testimoni</div>
+      <h2 class="font-display text-4xl font-700" style="color:#222">Kata <span style="color:var(--c1)">Pelanggan Kami</span></h2>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Testi 1 -->
+      <div class="p-6 rounded-3xl shadow-sm card-hover border" style="border-color:#fde8e8;background:#fffaf9">
+        <div class="flex gap-1 mb-4">
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed">"Segar banget dan rasanya enak! Tiap minggu pasti order Mixed Berry Bowl. Porsinya juga pas, nggak pelit."</p>
+        <div class="flex items-center gap-3 mt-5">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--c1)">A</div>
+          <div><p class="font-semibold text-sm text-gray-800">Anisa R.</p><p class="text-xs text-gray-400">Pelanggan Setia</p></div>
+        </div>
+      </div>
+      <!-- Testi 2 -->
+      <div class="p-6 rounded-3xl shadow-sm card-hover border" style="border-color:#fde8e8;background:#fffaf9">
+        <div class="flex gap-1 mb-4">
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed">"Pesanan untuk arisan 30 orang, semua senang! Tepat waktu, buahnya segar, sajiannya cantik. Pasti repeat order."</p>
+        <div class="flex items-center gap-3 mt-5">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--c2)">D</div>
+          <div><p class="font-semibold text-sm text-gray-800">Dewi S.</p><p class="text-xs text-gray-400">Pelanggan Katering</p></div>
+        </div>
+      </div>
+      <!-- Testi 3 -->
+      <div class="p-6 rounded-3xl shadow-sm card-hover border" style="border-color:#fde8e8;background:#fffaf9">
+        <div class="flex gap-1 mb-4">
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+          <i data-lucide="star" class="w-4 h-4 fill-current" style="color:#f59e0b"></i>
+        </div>
+        <p class="text-gray-600 text-sm leading-relaxed">"Anak-anak suka banget Strawberry Paradise. Alhamdulillah ketemu produk yang sehat tapi nggak perlu dipaksa makannya 😄"</p>
+        <div class="flex items-center gap-3 mt-5">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-sm" style="background:var(--c3)">F</div>
+          <div><p class="font-semibold text-sm text-gray-800">Fatimah W.</p><p class="text-xs text-gray-400">Ibu Rumah Tangga</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ ORDER FORM ══════════ -->
+<section id="order" class="py-20 px-6 md:px-12" style="background:var(--c4)">
+  <div class="max-w-2xl mx-auto">
+    <div class="text-center mb-10">
+      <div class="section-tag mb-4"><i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i> Formulir Pesanan</div>
+      <h2 class="font-display text-4xl font-700" style="color:#222">Pesan <span style="color:var(--c1)">Sekarang</span></h2>
+      <p class="mt-3 text-gray-500">Isi data pesanan Anda dan kami akan segera menghubungi Anda.</p>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-lg p-8 md:p-10">
+      <div id="formContainer">
+        <div class="grid md:grid-cols-2 gap-5">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Nama Lengkap <span style="color:var(--c1)">*</span></label>
+            <input id="f-name" type="text" placeholder="Masukkan nama Anda" class="form-input"/>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">No. WhatsApp <span style="color:var(--c1)">*</span></label>
+            <input id="f-wa" type="tel" placeholder="08xx-xxxx-xxxx" class="form-input"/>
+          </div>
+        </div>
+        <div class="mt-5">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih Menu <span style="color:var(--c1)">*</span></label>
+          <select id="f-menu" class="form-input">
+            <option value="">-- Pilih menu --</option>
+            <option value="Strawberry Paradise – Rp 28.000">🍓 Strawberry Paradise – Rp 28.000</option>
+            <option value="Mango Fiesta – Rp 25.000">🥭 Mango Fiesta – Rp 25.000</option>
+            <option value="Mixed Berry Bowl – Rp 32.000">🍇 Mixed Berry Bowl – Rp 32.000</option>
+            <option value="Melon Dream – Rp 22.000">🍈 Melon Dream – Rp 22.000</option>
+            <option value="Citrus Splash – Rp 26.000">🍊 Citrus Splash – Rp 26.000</option>
+          </select>
+        </div>
+        <div class="grid md:grid-cols-2 gap-5 mt-5">
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Jumlah Porsi <span style="color:var(--c1)">*</span></label>
+            <input id="f-qty" type="number" min="1" placeholder="1" class="form-input"/>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">Tanggal Pengiriman <span style="color:var(--c1)">*</span></label>
+            <input id="f-date" type="date" class="form-input"/>
+          </div>
+        </div>
+        <div class="mt-5">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Alamat Pengiriman <span style="color:var(--c1)">*</span></label>
+          <textarea id="f-addr" rows="3" placeholder="Jl. Contoh No. 1, Surabaya..." class="form-input resize-none"></textarea>
+        </div>
+        <div class="mt-5">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Catatan Tambahan</label>
+          <textarea id="f-note" rows="2" placeholder="Alergi, permintaan khusus, dll..." class="form-input resize-none"></textarea>
+        </div>
+        <button id="submitBtn" class="btn-primary w-full mt-7 flex items-center justify-center gap-2" onclick="submitOrder()">
+          <i data-lucide="send" class="w-4 h-4"></i> Kirim Pesanan
+        </button>
+        <p id="formMsg" class="text-center text-sm mt-3" style="color:var(--c1); display:none;"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ FOOTER ══════════ -->
+<footer class="py-12 px-6 md:px-12 text-white" style="background:var(--c1)">
+  <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <div class="w-8 h-8 rounded-lg bg-white flex items-center justify-center">
+          <i data-lucide="salad" class="w-4 h-4" style="color:var(--c1)"></i>
+        </div>
+        <span class="font-display font-800 text-xl">FreshBowl</span>
+      </div>
+      <p class="text-sm opacity-80 leading-relaxed">Salad buah premium, dibuat segar setiap hari. Sehat itu lezat!</p>
+    </div>
+    <div>
+      <p class="font-semibold mb-4">Navigasi</p>
+      <div class="flex flex-col gap-2 text-sm opacity-80">
+        <a href="#hero"  class="hover:opacity-100">Beranda</a>
+        <a href="#menu"  class="hover:opacity-100">Menu</a>
+        <a href="#about" class="hover:opacity-100">Tentang</a>
+        <a href="#order" class="hover:opacity-100">Pesan</a>
+      </div>
+    </div>
+    <div>
+      <p class="font-semibold mb-4">Hubungi Kami</p>
+      <div class="flex flex-col gap-3 text-sm opacity-80">
+        <div class="flex items-center gap-2">
+          <i data-lucide="phone" class="w-4 h-4"></i> 0812-3456-7890
+        </div>
+        <div class="flex items-center gap-2">
+          <i data-lucide="instagram" class="w-4 h-4"></i> @freshbowl.id
+        </div>
+        <div class="flex items-center gap-2">
+          <i data-lucide="map-pin" class="w-4 h-4"></i> Surabaya, Jawa Timur
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-6xl mx-auto mt-8 pt-6 border-t border-white border-opacity-20 text-center text-xs opacity-60">
+    © 2025 FreshBowl. Dibuat dengan hati untuk kesehatan Anda.
+  </div>
+</footer>
+
+<!-- Toast -->
+<div id="toast">✅ Pesanan berhasil dikirim!</div>
+
+<!-- ══════════ SCRIPTS ══════════ -->
+<script>
+  // Lucide icons
+  lucide.createIcons();
+
+  // ── Mobile nav ──
+  function toggleMobileMenu() {
+    const m = document.getElementById('mobile-menu');
+    m.classList.toggle('open');
+  }
+
+  // ── Slider ──
+  const CARD_WIDTH = 320 + 24; // min-w + mx-3*2
+  let current = 0;
+  const totalCards = 5;
+  const visible = () => window.innerWidth >= 768 ? 3 : 1;
+
+  const track = document.getElementById('sliderTrack');
+  const dotsContainer = document.getElementById('dots');
+
+  function initDots() {
+    dotsContainer.innerHTML = '';
+    const pages = totalCards - visible() + 1;
+    for (let i = 0; i < pages; i++) {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === 0 ? ' active' : '');
+      d.onclick = () => goTo(i);
+      dotsContainer.appendChild(d);
+    }
+  }
+
+  function goTo(i) {
+    const pages = totalCards - visible() + 1;
+    current = Math.max(0, Math.min(i, pages - 1));
+    track.style.transform = `translateX(-${current * CARD_WIDTH}px)`;
+    document.querySelectorAll('.dot').forEach((d, idx) => {
+      d.classList.toggle('active', idx === current);
+    });
+  }
+
+  function slide(dir) { goTo(current + dir); }
+
+  window.addEventListener('resize', () => { initDots(); goTo(0); });
+  initDots();
+
+  // Auto-slide
+  setInterval(() => slide(1), 4000);
+
+  // ── Google Sheets Submit ──
+  // 🔧 GANTI URL BERIKUT dengan URL Web App Google Apps Script Anda
+  const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzwu6GWDOeYoqJ0qd8Stn9oqAWoKkKI52kqqVr5UHcAOsMNMWIvHeP38aWZH1Weu6eh/exec';
+
+  async function submitOrder() {
+    const name  = document.getElementById('f-name').value.trim();
+    const wa    = document.getElementById('f-wa').value.trim();
+    const menu  = document.getElementById('f-menu').value;
+    const qty   = document.getElementById('f-qty').value;
+    const date  = document.getElementById('f-date').value;
+    const addr  = document.getElementById('f-addr').value.trim();
+    const note  = document.getElementById('f-note').value.trim();
+    const msg   = document.getElementById('formMsg');
+    const btn   = document.getElementById('submitBtn');
+
+    // Validation
+    if (!name || !wa || !menu || !qty || !date || !addr) {
+      msg.textContent = '⚠️ Harap isi semua field yang wajib diisi.';
+      msg.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<span>Mengirim...</span>';
+    msg.style.display = 'none';
+
+    const payload = { name, wa, menu, qty, date, addr, note, timestamp: new Date().toLocaleString('id-ID') };
+
+    try {
+      await fetch(SHEET_URL, {
+        method: 'POST',
+        mode:   'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      showToast();
+      // Reset form
+      ['f-name','f-wa','f-menu','f-qty','f-date','f-addr','f-note'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+    } catch (e) {
+      msg.textContent = '❌ Gagal mengirim. Coba lagi atau hubungi kami via WA.';
+      msg.style.display = 'block';
+    }
+
+    btn.disabled = false;
+    btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> Kirim Pesanan';
+    lucide.createIcons();
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3500);
+  }
+
+  // Set min date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('f-date').min = today;
+
+  // Re-init icons after dynamic content
+  setTimeout(() => lucide.createIcons(), 100);
+</script>
+</body>
+</html>
